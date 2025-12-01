@@ -37,8 +37,11 @@
             rbO = new RadioButton();
             rbX = new RadioButton();
             gbEmpate = new GroupBox();
+            lblEmpate = new Label();
             label1 = new Label();
             gbPlacar = new GroupBox();
+            lblPontosJ2 = new Label();
+            lblPontosJ1 = new Label();
             lblPlacarJ2 = new Label();
             lblPlacarJ1 = new Label();
             gbJogadores = new GroupBox();
@@ -53,7 +56,6 @@
             btnJogo7 = new Button();
             btnJogo8 = new Button();
             btnJogo9 = new Button();
-            lblEmpate = new Label();
             panelPrincipal.SuspendLayout();
             gbOpcoes.SuspendLayout();
             gbEmpate.SuspendLayout();
@@ -165,6 +167,15 @@
             gbEmpate.TabStop = false;
             gbEmpate.Text = "Empate";
             // 
+            // lblEmpate
+            // 
+            lblEmpate.AutoSize = true;
+            lblEmpate.Font = new Font("Microsoft Sans Serif", 20F, FontStyle.Regular, GraphicsUnit.Point);
+            lblEmpate.Location = new Point(88, 49);
+            lblEmpate.Name = "lblEmpate";
+            lblEmpate.Size = new Size(0, 31);
+            lblEmpate.TabIndex = 4;
+            // 
             // label1
             // 
             label1.AutoSize = true;
@@ -176,6 +187,8 @@
             // 
             // gbPlacar
             // 
+            gbPlacar.Controls.Add(lblPontosJ2);
+            gbPlacar.Controls.Add(lblPontosJ1);
             gbPlacar.Controls.Add(lblPlacarJ2);
             gbPlacar.Controls.Add(lblPlacarJ1);
             gbPlacar.Font = new Font("Microsoft Sans Serif", 18F, FontStyle.Regular, GraphicsUnit.Point);
@@ -187,15 +200,30 @@
             gbPlacar.TabStop = false;
             gbPlacar.Text = "Placar";
             // 
+            // lblPontosJ2
+            // 
+            lblPontosJ2.AutoSize = true;
+            lblPontosJ2.Location = new Point(124, 65);
+            lblPontosJ2.Name = "lblPontosJ2";
+            lblPontosJ2.Size = new Size(0, 29);
+            lblPontosJ2.TabIndex = 3;
+            // 
+            // lblPontosJ1
+            // 
+            lblPontosJ1.AutoSize = true;
+            lblPontosJ1.Location = new Point(37, 62);
+            lblPontosJ1.Name = "lblPontosJ1";
+            lblPontosJ1.Size = new Size(0, 29);
+            lblPontosJ1.TabIndex = 2;
+            // 
             // lblPlacarJ2
             // 
             lblPlacarJ2.AutoSize = true;
             lblPlacarJ2.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            lblPlacarJ2.Location = new Point(6, 67);
+            lblPlacarJ2.Location = new Point(99, 31);
             lblPlacarJ2.Name = "lblPlacarJ2";
-            lblPlacarJ2.Size = new Size(87, 18);
+            lblPlacarJ2.Size = new Size(0, 18);
             lblPlacarJ2.TabIndex = 1;
-            lblPlacarJ2.Text = "Jogador 2";
             lblPlacarJ2.Click += lblPlacarJ2_Click;
             // 
             // lblPlacarJ1
@@ -204,9 +232,8 @@
             lblPlacarJ1.Font = new Font("Verdana", 12F, FontStyle.Regular, GraphicsUnit.Point);
             lblPlacarJ1.Location = new Point(6, 33);
             lblPlacarJ1.Name = "lblPlacarJ1";
-            lblPlacarJ1.Size = new Size(87, 18);
+            lblPlacarJ1.Size = new Size(0, 18);
             lblPlacarJ1.TabIndex = 0;
-            lblPlacarJ1.Text = "Jogador 1";
             lblPlacarJ1.Click += lblPlacarJ1_Click;
             // 
             // gbJogadores
@@ -375,15 +402,6 @@
             btnJogo9.UseVisualStyleBackColor = false;
             btnJogo9.Click += ColocarXO;
             // 
-            // lblEmpate
-            // 
-            lblEmpate.AutoSize = true;
-            lblEmpate.Location = new Point(21, 34);
-            lblEmpate.Name = "lblEmpate";
-            lblEmpate.Size = new Size(96, 29);
-            lblEmpate.TabIndex = 2;
-            lblEmpate.Text = "Empate";
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -441,6 +459,8 @@
         private Button btnJogo7;
         private Button btnJogo8;
         private Button btnJogo9;
+        private Label lblPontosJ2;
+        private Label lblPontosJ1;
         private Label lblEmpate;
     }
 }

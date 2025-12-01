@@ -1,27 +1,22 @@
+using System.Diagnostics.Eventing.Reader;
+using System.Windows.Forms;
+
 namespace JogoDaVelha
 {
     public partial class Form1 : Form
     {
         string turno;
         string jogador1 = "", jogador2 = "";
-        int jogadas;
+        int jogadas, Empates;
         string jogador1XO, jogador2XO;
         int pontosJ1, pontosJ2;
+        bool tudocerto = true;
 
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnSair_Click(object sender, EventArgs e)
         {
@@ -35,7 +30,6 @@ namespace JogoDaVelha
             {
                 this.Close();
             }
-
         }
 
         private void btnReiniciar_Click(object sender, EventArgs e)
@@ -50,352 +44,208 @@ namespace JogoDaVelha
             }
 
             jogadas = 0;
-            turno = jogador1XO; // jogador 1 sempre começa
-        }
-
-        private void tbJogador2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblPlacarJ1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblPlacarJ2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void gbOpcoes_Enter(object sender, EventArgs e)
-        {
-
+            if (!string.IsNullOrEmpty(jogador1XO))
+            {
+                turno = jogador1XO;
+            }
+            else
+            {
+                turno = "X";
+            }
         }
 
         private void btnIniciar_Click(object sender, EventArgs e)
         {
-
             bool jogador1Vazio = string.IsNullOrWhiteSpace(tbJogador1.Text);
             bool jogador2Vazio = string.IsNullOrWhiteSpace(tbJogador2.Text);
 
             if (jogador1Vazio || jogador2Vazio)
             {
-
                 string mensagem = "O nome do(s) seguinte(s) jogador(es) deve(m) ser preenchido(s):\n";
                 if (jogador1Vazio) mensagem += "- Jogador 1\n";
                 if (jogador2Vazio) mensagem += "- Jogador 2\n";
 
                 MessageBox.Show(mensagem, "Preenchimento Obrigatório", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                tudocerto = false;
                 return;
             }
 
-
-            if (!string.IsNullOrWhiteSpace(tbJogador1.Text) && !string.IsNullOrWhiteSpace(tbJogador2.Text))
+            if (tbJogador1.Text.Trim().Equals(tbJogador2.Text.Trim(), StringComparison.OrdinalIgnoreCase))
             {
-                if (tbJogador1.Text.Trim().Equals(tbJogador2.Text.Trim(), StringComparison.OrdinalIgnoreCase))
-                {
-                    MessageBox.Show("Não é permitido nomes iguais. Tente novamente.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
+                MessageBox.Show("Não é permitido nomes iguais. Tente novamente.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                tudocerto = false;
+                return;
             }
 
             if (!rbO.Checked && !rbX.Checked)
             {
                 MessageBox.Show("Selecione uma alternativa entre X e O.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                tudocerto = false;
                 return;
             }
 
-            string nomeJogador1 = tbJogador1.Text.Trim();
-            MessageBox.Show($"{nomeJogador1} começa!", "Início do Jogo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            btnJogo1.Enabled = true;
-            btnJogo2.Enabled = true;
-            btnJogo3.Enabled = true;
-            btnJogo4.Enabled = true;
-            btnJogo5.Enabled = true;
-            btnJogo6.Enabled = true;
-            btnJogo7.Enabled = true;
-            btnJogo8.Enabled = true;
-            btnJogo9.Enabled = true;
-
-            rbX.Enabled = false;
-            rbO.Enabled = false;
-
-            //Checar qual o 1° quer jogar: X ou O
-            if (rbX.Checked)
+            tudocerto = true;
+            if (tudocerto)
             {
-                jogador1XO = "x";
-                jogador2XO = "o";
+                btnIniciar.Enabled = false;
+                tbJogador1.Enabled = false;
+                tbJogador2.Enabled = false;
+                rbX.Enabled = false;
+                rbO.Enabled = false;
+
+                btnJogo1.Enabled = true;
+                btnJogo2.Enabled = true;
+                btnJogo3.Enabled = true;
+                btnJogo4.Enabled = true;
+                btnJogo5.Enabled = true;
+                btnJogo6.Enabled = true;
+                btnJogo7.Enabled = true;
+                btnJogo8.Enabled = true;
+                btnJogo9.Enabled = true;
+
+                jogador1 = tbJogador1.Text.Trim();
+                jogador2 = tbJogador2.Text.Trim();
+
+                if (rbX.Checked)
+                {
+                    jogador1XO = "X";
+                    jogador2XO = "O";
+                }
+                else
+                {
+                    jogador1XO = "O";
+                    jogador2XO = "X";
+                }
+
+                turno = jogador1XO;
+                jogadas = 0;
+
+                pontosJ1 = 0;
+                pontosJ2 = 0;
+                lblPlacarJ1.Text = jogador1;
+                lblPlacarJ2.Text = jogador2;
+                lblPontosJ1.Text = pontosJ1.ToString();
+                lblPontosJ2.Text = pontosJ2.ToString();
+                lblEmpate.Text = Empates.ToString();
+
+                MessageBox.Show($"{jogador1} começa!", "Início do Jogo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            else if (rbO.Checked)
-            {
-                jogador1XO = "o";
-                jogador2XO = "x";
-            }
-
-            // Define o turno inicial e zera jogadas
-            turno = jogador1XO;
-            jogadas = 0;
-
-
         }
+
+
+        private void DesabilitarBotoesJogo()
+        {
+            foreach (Control c in Controls)
+            {
+                if (c is Button btn && btn.Name.StartsWith("btnJogo"))
+                {
+                    btn.Enabled = false;
+                }
+            }
+        }
+
+        private bool ChecarCombinacao(Button b1, Button b2, Button b3)
+        {
+            string simbolo = b1.Text;
+
+            if (string.IsNullOrWhiteSpace(simbolo) || b1.Text != b2.Text || b2.Text != b3.Text)
+            {
+                return false;
+            }
+
+            DesabilitarBotoesJogo();
+
+            string nomeVencedor;
+            bool jogador1Venceu = simbolo == jogador1XO;
+
+            if (jogador1Venceu)
+            {
+                pontosJ1++;
+                lblPontosJ1.Text = pontosJ1.ToString();
+                nomeVencedor = jogador1;
+            }
+            else
+            {
+                pontosJ2++;
+                lblPontosJ2.Text = pontosJ2.ToString();
+                nomeVencedor = jogador2;
+            }
+
+            MessageBox.Show($"{nomeVencedor} Ganhou o Jogo!", "Fim de Jogo");
+            return true;
+        }
+
 
         private void VerificarGanhador()
         {
-            //x
-            //vertical
-            if (btnJogo1.Text == "x" && btnJogo2.Text == "x" && btnJogo3.Text == "x")
-            {
-                if (jogador1XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador2} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo4.Text == "x" && btnJogo5.Text == "x" && btnJogo6.Text == "x")
-            {
-                if (jogador1XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador1} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador2} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo7.Text == "x" && btnJogo8.Text == "x" && btnJogo9.Text == "x")
-            {
-                if (jogador1XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador1} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador2} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            //horizontal
-            if (btnJogo1.Text == "x" && btnJogo4.Text == "x" && btnJogo7.Text == "x")
-            {
-                if (jogador1XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador1} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador2} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo2.Text == "x" && btnJogo5.Text == "x" && btnJogo8.Text == "x")
-            {
-                if (jogador1XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador1} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador2} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo3.Text == "x" && btnJogo6.Text == "x" && btnJogo9.Text == "x")
-            {
-                if (jogador1XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            //Diagonal
-            if (btnJogo1.Text == "x" && btnJogo5.Text == "x" && btnJogo9.Text == "x")
-            {
-                if (jogador1XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo3.Text == "x" && btnJogo5.Text == "x" && btnJogo7.Text == "x")
-            {
-                if (jogador1XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "X")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
 
-            //O
-            //vertical
-            if (btnJogo1.Text == "O" && btnJogo2.Text == "O" && btnJogo3.Text == "O")
+            // Horizontais
+            if (ChecarCombinacao(btnJogo1, btnJogo2, btnJogo3)) return;
+            if (ChecarCombinacao(btnJogo4, btnJogo5, btnJogo6)) return;
+            if (ChecarCombinacao(btnJogo7, btnJogo8, btnJogo9)) return;
+
+            // Verticais
+            if (ChecarCombinacao(btnJogo1, btnJogo4, btnJogo7)) return;
+            if (ChecarCombinacao(btnJogo2, btnJogo5, btnJogo8)) return;
+            if (ChecarCombinacao(btnJogo3, btnJogo6, btnJogo9)) return;
+
+            // Diagonais
+            if (ChecarCombinacao(btnJogo1, btnJogo5, btnJogo9)) return;
+            if (ChecarCombinacao(btnJogo3, btnJogo5, btnJogo7)) return;
+
+            // Se chegou a 9 jogadas e ninguém ganhou
+            if (jogadas == 9)
             {
-                if (jogador1XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo4.Text == "O" && btnJogo5.Text == "O" && btnJogo6.Text == "O")
-            {
-                if (jogador1XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo7.Text == "O" && btnJogo8.Text == "O" && btnJogo9.Text == "O")
-            {
-                if (jogador1XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            //horizontal
-            if (btnJogo1.Text == "O" && btnJogo4.Text == "O" && btnJogo7.Text == "O")
-            {
-                if (jogador1XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo2.Text == "O" && btnJogo5.Text == "O" && btnJogo8.Text == "O")
-            {
-                if (jogador1XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo3.Text == "O" && btnJogo6.Text == "O" && btnJogo9.Text == "O")
-            {
-                if (jogador1XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            //Diagonal
-            if (btnJogo1.Text == "O" && btnJogo5.Text == "O" && btnJogo9.Text == "O")
-            {
-                if (jogador1XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
-            }
-            if (btnJogo3.Text == "O" && btnJogo5.Text == "O" && btnJogo7.Text == "O")
-            {
-                if (jogador1XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador1.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ1++;
-                }
-                if (jogador2XO == "o")
-                {
-                    MessageBox.Show($"{tbJogador2.Text} Ganhou o Jogo", "Fim de Jogo");
-                    pontosJ2++;
-                }
+                MessageBox.Show("O jogo terminou em empate!", "Fim de Jogo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Empates++;
+                lblEmpate.Text = Empates.ToString();
+                DesabilitarBotoesJogo();
             }
         }
+
 
         private void ColocarXO(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
 
-            // Se o botão já foi clicado, não faz nada
-            if (!btn.Enabled)
+            if (!tudocerto || !btn.Enabled)
                 return;
 
-            // Coloca o símbolo do jogador atual
-            if (turno == jogador1XO)
-            {
-                btn.Text = jogador1XO.ToUpper();
-                turno = jogador2XO; // troca para o outro jogador
-            }
-            else
-            {
-                btn.Text = jogador2XO.ToUpper();
-                turno = jogador1XO;
-            }
-
-            btn.Enabled = false; // desativa o botão clicado
+            btn.Text = turno;
+            btn.Enabled = false;
             jogadas++;
 
-            // Verifica se alguém ganhou
-            VerificarGanhador();
+            turno = (turno == jogador1XO) ? jogador2XO : jogador1XO;
 
-            // Se chegou a 9 jogadas e ninguém ganhou, é empate
-            if (jogadas == 9)
-
+            if (jogadas >= 5)
             {
-                MessageBox.Show("O jogo terminou em empate!", "Fim de Jogo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                VerificarGanhador();
             }
+        }
 
-
+        private void radioButton1_CheckedChanged(object sender, EventArgs e) 
+        {
+        
+        }
+        private void textBox1_TextChanged(object sender, EventArgs e) 
+        {
+        
+        }
+        private void tbJogador2_TextChanged(object sender, EventArgs e) 
+        {
+        
+        }
+        private void lblPlacarJ1_Click(object sender, EventArgs e) 
+        {
+        
+        }
+        private void lblPlacarJ2_Click(object sender, EventArgs e) 
+        {
+        
+        }
+        private void gbOpcoes_Enter(object sender, EventArgs e) 
+        {
+        
         }
     }
 }
